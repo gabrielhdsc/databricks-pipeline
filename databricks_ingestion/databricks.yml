@@ -4,16 +4,12 @@ bundle:
   name: databricks_ingestion
   uuid: 4ac9964f-e571-44a8-aca6-c56a3644f011
 
-include:
-  - resources/*.yml
-  - resources/*/*.yml
 
 # Variable declarations. These variables are assigned in the dev/prod targets below.
 variables:
   catalog:
     description: The catalog to use
-  schema:
-    description: The schema to use
+
 
 
 resources:
@@ -57,13 +53,13 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-980023092254454.14.azuredatabricks.net
+      host: https://adb-2892896435296957.17.azuredatabricks.net
     variables:
       catalog: projeto_teste
   prod:
     mode: production
     workspace:
-      host: https://adb-980023092254454.14.azuredatabricks.net
+      host: https://adb-2892896435296957.17.azuredatabricks.net
       # We explicitly deploy to /Workspace/Users/gabriel.santos@programmers.com.br to make sure we only have a single copy.
       root_path: /Workspace/Users/gabriel.santos@programmers.com.br/.bundle/${bundle.name}/${bundle.target}
     variables:
