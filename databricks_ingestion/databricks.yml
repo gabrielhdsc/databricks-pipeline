@@ -1,0 +1,74 @@
+# This is a Databricks asset bundle definition for databricks_ingestion.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: databricks_ingestion
+  uuid: 4ac9964f-e571-44a8-aca6-c56a3644f011
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+# Variable declarations. These variables are assigned in the dev/prod targets below.
+variables:
+  catalog:
+    description: The catalog to use
+  schema:
+    description: The schema to use
+
+
+resources:
+  jobs:
+    pipeline_medallion_architecture:
+      name: "Pipeline_bronze_to_gold"
+      job_clusters:
+        - job_cluster_key: "cluster_padrao"
+          new_cluster:
+            spark_version: "13.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+      
+      tasks:
+        - task_key: bronze_ingestion
+          job_cluster_key: "cluster_padrao"
+          notebook_task:
+            notebook_path: "./src/01_bronze.py"
+        
+        - task_key: silver_transformations
+          depends_on:
+            - task_key: bronze_ingestion 
+          job_cluster_key: "cluster_padrao"
+          notebook_task:
+            notebook_path: "./src/02_silver.py"
+
+        - task_key: gold_aggregations
+          depends_on:
+            - task_key: silver_transformations 
+          job_cluster_key: "cluster_padrao"
+          notebook_task:
+            notebook_path: "./src/03_gold.py"   
+
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-980023092254454.14.azuredatabricks.net
+    variables:
+      catalog: projeto_teste
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-980023092254454.14.azuredatabricks.net
+      # We explicitly deploy to /Workspace/Users/gabriel.santos@programmers.com.br to make sure we only have a single copy.
+      root_path: /Workspace/Users/gabriel.santos@programmers.com.br/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: projeto_teste
+    permissions:
+      - user_name: gabriel.santos@programmers.com.br
+        level: CAN_MANAGE     
+
