@@ -1,4 +1,4 @@
-# Ingestao medallion no Databricks
+# Ingestao Medallion no Databricks
 
 Este projeto implementa uma carga de dados em arquitetura medallion, executada pelo job `Pipeline_bronze_to_gold` definido em `databricks.yml`.
 
@@ -43,7 +43,7 @@ Para dados CSV de exemplo, execute `src/Batches_creation.py` no Databricks. Ele 
 
     2 - Teste de Evolução de Schema (Drift): Ao gerar o segundo lote de dados, o script adiciona propositalmente uma coluna não esperada        (extra_tax). O objetivo é provar na prática a eficácia do Rescue Mode do Auto Loader: o pipeline absorve o novo schema sem falhar e isola os dados novos de forma segura.
 
-## Deploy e execucao
+## Deploy e execução
 
 Valide o bundle antes do deploy:
 
@@ -63,7 +63,7 @@ uv run pytest
 
 O teste atual usa Databricks Connect e requer credenciais e compute acessivel. Ele e um teste do codigo de exemplo, nao uma validacao ponta a ponta da ingestao.
 
-## ✨ Destaques Técnicos e Decisões de Arquitetura
+## Destaques Técnicos e Decisões de Arquitetura
 
 - Adoção de ingestão incremental (streaming) nas camadas Bronze e Silver para eficiência, combinada com recálculo total (`overwrite`) na camada Gold. Garante idempotência, simplifica agregações complexas e corrige automaticamente dados com chegada tardia (*late-arriving data*) sem a alta complexidade de gerenciar um `MERGE INTO`.
 - As etapas Bronze e Silver usam `availableNow` e aguardam o termino do stream antes de finalizar a tarefa; isso preserva a ordem Bronze -> Silver -> Gold no job.
