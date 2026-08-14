@@ -31,7 +31,7 @@ df_gold = (df_silver
 (df_gold.write
     .format("delta")
     .mode("overwrite")
-    .saveAsTable("projeto_teste.gold_teste.monthy_city_listings_metrics")
+    .saveAsTable("projeto_teste.gold_teste.monthly_city_listings_metrics")
 )
 
 print ("Gold criada com sucesso")

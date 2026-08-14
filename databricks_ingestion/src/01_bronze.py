@@ -33,6 +33,7 @@ query = (df_stream.writeStream
     .trigger(availableNow=True)
     .toTable(f"{table_path}.past_rates")
 )
+query.awaitTermination()
 
 print("Ingestão da tabela past_rates na camada bronze concluída")
 
@@ -59,6 +60,7 @@ query = (df_stream.writeStream
     .trigger(availableNow=True)
     .toTable(f"{table_path}.listings")
 )
+query.awaitTermination()
 
 print("Ingestão da tabela listings na camada bronze concluída")
 

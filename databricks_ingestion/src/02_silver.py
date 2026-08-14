@@ -55,5 +55,6 @@ query_silver = (df_silver.writeStream
     .trigger(availableNow=True)
     .toTable("projeto_teste.silver_teste.past_rates")
 )
+query_silver.awaitTermination()
 
 print("Tabela criada na camada silver com suscesso")
